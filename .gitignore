@@ -1,3 +1,9 @@
 dataset_sum2win/
 dataset_vis2inf/
+pix2pix/evaluation/
 subscription_key.txt
+pix2pix/x.png
+pix2pix/y.png
+pix2pix/gen.pth
+pix2pix/disc.pth
+
