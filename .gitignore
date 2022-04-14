@@ -6,4 +6,6 @@ pix2pix/x.png
 pix2pix/y.png
 pix2pix/gen.pth
 pix2pix/disc.pth
-
+pix2pix/outputs/
+test.py
+test.ipynb
