@@ -9,4 +9,6 @@ pix2pix/disc.pth
 pix2pix/outputs/
 test.py
 test.ipynb
+test.txt
+test.csv
 
