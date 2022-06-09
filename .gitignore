@@ -19,4 +19,5 @@ cyclegan/geninf.pth
 cyclegan/genvis.pth
 cyclegan/x.png
 cyclegan/y.png
-
+ASGIT/
+AttentionGAN/
