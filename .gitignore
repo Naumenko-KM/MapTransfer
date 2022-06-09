@@ -11,4 +11,15 @@ test.py
 test.ipynb
 test.txt
 test.csv
+cyclegan/saved_images/
+cyclegan/evaluation/
+cyclegan/criticinf.pth
+cyclegan/criticvis.pth
+cyclegan/geninf.pth
+cyclegan/genvis.pth
+cyclegan/x.png
+cyclegan/y.png
+cyclegan/history/
+ASGIT/
+AttentionGAN/
 environment.yml
