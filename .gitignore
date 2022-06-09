@@ -7,6 +7,10 @@ pix2pix/y.png
 pix2pix/gen.pth
 pix2pix/disc.pth
 pix2pix/outputs/
+pix2pix/outs9/
+pix2pix/outs10/
+pix2pix/outs14/
+pix2pix/out15/
 test.py
 test.ipynb
 test.txt
