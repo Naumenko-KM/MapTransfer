@@ -1,14 +1,11 @@
 import torch
-import albumentations as A
-from albumentations.pytorch import ToTensorV2
 
 
-dataset_path = "C:/Users/supercomp/MapTransfer/dataset_vis2inf/dataset_pix2pix"
-
+DATASET_PATH = "C:/Users/supercomp/MapTransfer/dataset_vis2inf/dataset_pix2pix"
 DEVICE = "cuda" if torch.cuda.is_available() else "cpu"
-TRAIN_DIR = dataset_path + '/train'
-VAL_DIR = dataset_path + '/valid'
-TEST_DIR = dataset_path + '/test'
+TRAIN_DIR = DATASET_PATH + '/train'
+VAL_DIR = DATASET_PATH + '/valid'
+TEST_DIR = DATASET_PATH + '/test'
 EVAL_DIR = 'evaluation'
 D_LEARNING_RATE = 1e-3
 G_LEARNING_RATE = 1e-3

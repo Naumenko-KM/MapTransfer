@@ -1,18 +1,21 @@
-import torch
-from dataset import MapDataset
 import sys
-from utils import *
-from torch.utils.data import DataLoader
+
+import torch
 import torch.nn as nn
 import torch.optim as optim
-import config
-from tqdm import tqdm
+from torch.utils.data import DataLoader
 from torchvision.utils import save_image
+from tqdm import tqdm
+
+import config
+from utils import *
+from dataset import MapDataset
 from discriminator import Discriminator
 from generator import Generator
 
 
-def train_fn(disc, gen, loader, opt_disc, opt_gen, l1_loss, bce, g_scaler, d_scaler, epoch):
+def train_fn(disc, gen, loader, opt_disc, opt_gen, l1_loss,
+             bce, g_scaler, d_scaler, epoch):
     loop = tqdm(loader, leave=True)
     D_loss_epoch = []
     G_loss_epoch = []
@@ -55,10 +58,10 @@ def train_fn(disc, gen, loader, opt_disc, opt_gen, l1_loss, bce, g_scaler, d_sca
                 D_fake=torch.sigmoid(D_fake).mean().item(),
                 epoch=epoch+1
             )
-            
+
         D_loss_epoch.append(D_loss)
         G_loss_epoch.append(G_loss)
-    
+
     D_loss_epoch = torch.FloatTensor(D_loss_epoch).mean()
     G_loss_epoch = torch.FloatTensor(G_loss_epoch).mean()
 
@@ -82,8 +85,8 @@ def validation_fn(gen, disc, loader):
             y_fake = gen(x)
             preds = disc(x, y_fake.detach())
             preds = Sigmoid(preds).round()
-            accuracy = (preds == torch.zeros_like(preds)).sum() / torch.numel(preds)
-
+            accuracy = ((preds == torch.zeros_like(preds)).sum() /
+                        torch.numel(preds))
             disc_accuracy.append(accuracy)
             L1_losses.append(L1(y_fake, y))
             L2_losses.append(L2(y_fake, y))
@@ -97,7 +100,7 @@ def validation_fn(gen, disc, loader):
 
 
 def main():
-    D_loss =  []
+    D_loss = []
     G_loss = []
     L1_loss_val = []
     L2_loss_val = []
@@ -106,13 +109,20 @@ def main():
     G_LR_plot = []
     disc = Discriminator(in_channels=3).to(config.DEVICE)
     gen = Generator(in_channels=3, features=64).to(config.DEVICE)
-    opt_disc = optim.Adam(disc.parameters(), lr=config.D_LEARNING_RATE, betas=(0.5, 0.999))
-    opt_gen = optim.Adam(gen.parameters(), lr=config.G_LEARNING_RATE, betas=(0.5, 0.999))
-    sheduler_disc = optim.lr_scheduler.StepLR(opt_disc, step_size=config.D_SCHEDULER_STEP, gamma=config.D_SCHEDULER_GAMMA)
-    sheduler_gen = optim.lr_scheduler.StepLR(opt_gen, step_size=config.G_SCHEDULER_STEP, gamma=config.G_SCHEDULER_GAMMA)
+    opt_disc = optim.Adam(disc.parameters(), lr=config.D_LEARNING_RATE,
+                          betas=(0.5, 0.999))
+    opt_gen = optim.Adam(gen.parameters(), lr=config.G_LEARNING_RATE,
+                         betas=(0.5, 0.999))
+    sheduler_disc = optim.lr_scheduler.StepLR(
+        opt_disc,
+        step_size=config.D_SCHEDULER_STEP,
+        gamma=config.D_SCHEDULER_GAMMA
+        )
+    sheduler_gen = optim.lr_scheduler.StepLR(opt_gen,
+                                             step_size=config.G_SCHEDULER_STEP,
+                                             gamma=config.G_SCHEDULER_GAMMA)
 
     BCE = nn.BCEWithLogitsLoss()
-    
     L1_LOSS = nn.L1Loss()
 
     if config.LOAD_MODEL:
@@ -140,14 +150,15 @@ def main():
             sheduler_disc.step()
             sheduler_gen.step()
 
-        D_loss_epoch, G_loss_epoch = train_fn(disc, gen, train_loader, opt_disc,
-                                                opt_gen, L1_LOSS, BCE, g_scaler, d_scaler, epoch)
+        D_loss_epoch, G_loss_epoch = train_fn(disc, gen, train_loader,
+                                              opt_disc, opt_gen, L1_LOSS, BCE,
+                                              g_scaler, d_scaler, epoch)
         L1_val, L2_val, disc_accuracy = validation_fn(gen, disc, val_loader)
 
         if config.SAVE_MODEL and epoch % 5 == 0:
             save_checkpoint(gen, opt_gen, filename=config.CHECKPOINT_GEN)
             save_checkpoint(disc, opt_disc, filename=config.CHECKPOINT_DISC)
-        
+
         D_loss.append(D_loss_epoch.cpu().detach().numpy())
         G_loss.append(G_loss_epoch.cpu().detach().numpy())
         L1_loss_val.append(L1_val.cpu().detach().numpy())
@@ -157,14 +168,18 @@ def main():
         G_LR_plot.append(sheduler_gen.get_last_lr())
 
         display.clear_output(True)
-        plot_loss_lr(D_loss, G_loss, L1_loss_val, L2_loss_val, G_LR_plot, D_LR_plot, epoch)
-        save_some_examples(gen, val_loader, epoch, folder=config.EVAL_DIR, show_images=True)
+        plot_loss_lr(D_loss, G_loss, L1_loss_val, L2_loss_val,
+                     G_LR_plot, D_LR_plot, epoch)
+        save_some_examples(gen, val_loader, epoch,
+                           folder=config.EVAL_DIR, show_images=True)
         if epoch % 5 == 0 or epoch + 1 == config.NUM_EPOCHS:
             save_gif(config.EVAL_DIR, L1_loss_val, L2_loss_val)
         display_gif(config.EVAL_DIR)
-        save_metrics(L1_loss_val, L2_loss_val, disc_accuracy, config.EVAL_DIR, plot=True)
+        save_metrics(L1_loss_val, L2_loss_val, disc_accuracy,
+                     config.EVAL_DIR, plot=True)
 
-    # print(f'Best L1: {max(L1_loss)/config.L1_LAMBDA}, epoch: {np.asarray(L1_loss).argmax()}')
+    # print(f'Best L1: {max(L1_loss)/config.L1_LAMBDA},
+    #       epoch: {np.asarray(L1_loss).argmax()}')
 
 
 if __name__ == "__main__":

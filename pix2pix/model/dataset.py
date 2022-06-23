@@ -1,23 +1,19 @@
-
 import os
-import csv
-import random
 
 import numpy as np
-import torch
 from torch.utils.data import Dataset, DataLoader
 from torchvision.utils import save_image
 import albumentations as A
 from albumentations.pytorch import ToTensorV2
-from PIL import Image, ImageFont, ImageDraw 
+from PIL import Image
 
 import config
 
 
 transform = A.Compose(
     [A.Resize(width=256, height=256),
-    A.Normalize(mean=[0, 0, 0], std=[1, 1, 1]),
-    ToTensorV2()], additional_targets={"image0": "image"}
+     A.Normalize(mean=[0, 0, 0], std=[1, 1, 1]),
+     ToTensorV2()], additional_targets={"image0": "image"}
 )
 
 

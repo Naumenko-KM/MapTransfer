@@ -7,8 +7,8 @@ class CNNBlock(nn.Module):
         super(CNNBlock, self).__init__()
         self.conv = nn.Sequential(
             nn.Conv2d(
-                in_channels, out_channels, 4, stride, 1, bias=False, padding_mode="reflect"
-            ),
+                in_channels, out_channels, 4, stride, 1, bias=False,
+                padding_mode="reflect"),
             nn.InstanceNorm2d(out_channels, affine=True),
             nn.LeakyReLU(0.2),
         )
@@ -36,14 +36,14 @@ class Discriminator(nn.Module):
         in_channels = features[0]
         for feature in features[1:]:
             layers.append(
-                CNNBlock(in_channels, feature, stride=1 if feature == features[-1] else 2),
-            )
+                CNNBlock(in_channels, feature,
+                         stride=1 if feature == features[-1] else 2))
             in_channels = feature
 
         layers.append(
             nn.Conv2d(
-                in_channels, 1, kernel_size=4, stride=1, padding=1, padding_mode="reflect"
-            ),
+                in_channels, 1, kernel_size=4, stride=1, padding=1,
+                padding_mode="reflect"),
         )
 
         self.model = nn.Sequential(*layers)
