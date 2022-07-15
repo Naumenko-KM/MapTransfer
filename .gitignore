@@ -6,6 +6,9 @@ pix2pix/x.png
 pix2pix/y.png
 pix2pix/gen.pth
 pix2pix/disc.pth
+pix2pix/model/gen.pth
+pix2pix/model/disc.pth
+pix2pix/weights/
 pix2pix/outputs/
 pix2pix/outs9/
 pix2pix/outs10/
